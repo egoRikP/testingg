@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require('path');
 
 const getTokens = (game) => {
-    const secretPath = path.join('/etc/secrets', filename);
+    const secretPath = path.join('/etc/secrets', game);
     if (fs.existsSync(secretPath)) {
         const data = fs.readFileSync(secretPath, 'utf-8');
         return data;
