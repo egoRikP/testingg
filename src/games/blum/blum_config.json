@@ -1,0 +1,4 @@
+{
+    "filePath":"./etc/secrets/blumTokens.txt",
+    "baseURL":"https://game-domain.blum.codes/api/v1/"
+}

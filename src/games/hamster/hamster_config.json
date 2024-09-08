@@ -1,0 +1,9 @@
+{
+    "filePath":"./etc/secrets/hamTokens.txt",
+    "baseURL":"https://api.hamsterkombatgame.io/clicker/",
+    "sync": "sync",
+    "tap": "tap",
+    "upgradesForBuy": "upgrades-for-buy",
+    "buyUpgrade": "buy-upgrade",
+    "buyBoost": "buy-boost"
+}
