@@ -2,7 +2,7 @@ const fs = require("fs");
 
 const getTokens = (game) => {
     try {
-        return fs.readFileSync(`./etc/secrets/${game}_tokens.txt`, 'utf8').trim().split('\n');
+        return fs.readFileSync(`/etc/secrets/${game}_tokens.txt`, 'utf8').trim().split('\n');
     } catch (error) {
         console.error("Error reading tokens from file: ", error);
     }
