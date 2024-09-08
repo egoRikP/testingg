@@ -1,10 +1,14 @@
 const fs = require("fs");
+const path = require('path');
 
 const getTokens = (game) => {
-    try {
-        return fs.readFileSync(`/etc/secrets/${game}_tokens.txt`, 'utf8').trim().split('\n');
-    } catch (error) {
-        console.error("Error reading tokens from file: ", error);
+    const secretPath = path.join('/etc/secrets', filename);
+    if (fs.existsSync(secretPath)) {
+        const data = fs.readFileSync(secretPath, 'utf-8');
+        return data;
+    } else {
+        console.error(`Secret file not found: ${secretPath}`);
+        return null;
     }
 };
 
