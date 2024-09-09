@@ -4,8 +4,6 @@ const fs = require("fs");
 const path = require("path");
 const cron = require('node-cron');
 
-console.log(getConfig());
-
 const {get, post} = require("./../../utils/axiosHandler.js");
 
 get("https://jsonplaceholder.typicode.com/todos/1").then(e => {
