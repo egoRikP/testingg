@@ -4,7 +4,6 @@ const fs = require("fs");
 const path = require("path");
 const cron = require('node-cron');
 
-const {getConfig} = require("./utils/fileReader.js");
 console.log(getConfig());
 
 const {get, post} = require("./../../utils/axiosHandler.js");
