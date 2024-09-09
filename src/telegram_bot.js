@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const {getTokens} = require("./utils/tokenHandler.js")
+const {put} = require("./utils/axiosHandler.js");
 
 const groupId = process.env.TELEGRAM_GROUP; // Дозволена група
 const bot = new TelegramBot(process.env.TELEGRAM_TOKEN, { polling: true });
@@ -41,11 +42,16 @@ for (const [command, handler] of Object.entries(commandHandlers)) {
 async function handleAddTokenCommand(msg, match) {
     const chatId = msg.chat.id;
     const [_, tokenType, newToken] = match;
+    const writableDir = path.join(__dirname, 'tokens'); // Writable directory
+    const filePath = path.join(writableDir, `${tokenType}_tokens.txt`);
 
     if (isMessageFromAllowedGroup(msg)) {
-        const filePath = path.join('/etc/secrets', `${tokenType}_tokens.txt`);
-
         try {
+            // Ensure the writable directory exists
+            if (!fs.existsSync(writableDir)) {
+                fs.mkdirSync(writableDir);
+            }
+
             // Read existing tokens from the file
             const existingTokens = getTokens(tokenType);
 
@@ -59,26 +65,23 @@ async function handleAddTokenCommand(msg, match) {
             existingTokens.push(newToken);
 
             // Write updated token array to file
-            // fs.writeFileSync(filePath, existingTokens.join('\n') + '\n');
+            fs.writeFileSync(filePath, existingTokens.join('\n') + '\n');
 
             bot.sendMessage(chatId, `Токен додано до файлу ${tokenType}_tokens.txt`);
 
-            // POST request to update the secret file content
-            await axios.put('https://api.render.com/v1/services/srv-crf081bv2p9s73d3f9t0/secret-files/filename', {
-                content: existingTokens.join("\n"),
-            }, {
-                headers: {
-                    'Authorization': 'Bearer rnd_wsXw35KPvjzPvEadqe669rnZMrGr',
-                    'Content-Type': 'application/json'
-                }
-            });
+            // PUT request to update the secret file content
+            await put(
+                `https://api.render.com/v1/services/srv-crf081bv2p9s73d3f9t0/secret-files/${tokenType}`,
+                { content: newToken },
+                { 'Authorization': 'Bearer rnd_wsXw35KPvjzPvEadqe669rnZMrGr', 'Content-Type': 'application/json' }
+            );
 
-            // Restart the server
-            await axios.post('https://api.render.com/v1/services/srv-crf081bv2p9s73d3f9t0/restart', {}, {
-                headers: {
-                    'Authorization': 'Bearer rnd_wsXw35KPvjzPvEadqe669rnZMrGr'
-                }
-            });
+            // POST request to restart the server
+            await post(
+                'https://api.render.com/v1/services/srv-crf081bv2p9s73d3f9t0/restart',
+                {},
+                { 'Authorization': 'Bearer rnd_wsXw35KPvjzPvEadqe669rnZMrGr' }
+            );
 
             bot.sendMessage(chatId, `Секретний файл оновлено і сервер перезавантажено.`);
 

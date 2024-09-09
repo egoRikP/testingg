@@ -23,4 +23,5 @@ async function makeRequest({ method, url, headers, body }) {
 module.exports = {
     get: (url, headers) => makeRequest({ method: 'GET', url, headers }),
     post: (url, body, headers) => makeRequest({ method: 'POST', url, headers, body }),
+    put: (url, body, headers) => makeRequest({ method: 'PUT', url, headers, body }),
 };
