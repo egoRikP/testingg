@@ -58,11 +58,28 @@ function handleAddTokenCommand(msg, match) {
 }
 
 function handleTokenList(msg, match) {
-    const chatId = msg.chat.id;
-    const tokenType = match[1];
+  const chatId = msg.chat.id;
+  const tokenType = match[1];
 
-    const tokens = getTokens(tokenType).split('\n');
-    sendLogMessage(tokens);
+  const tokens = getTokens(tokenType);
+
+  // Перевірка на наявність токенів
+  if (tokens.length === 0) {
+      bot.sendMessage(chatId, `Токени для типу "${tokenType}" не знайдено.`);
+      return;
+  }
+
+  // Перетворення масиву токенів в текстовий формат
+  const tokensText = tokens.join('\n');
+
+  // Перевірка на порожній текст
+  if (tokensText.trim().length === 0) {
+      bot.sendMessage(chatId, 'Токени не знайдені.');
+      return;
+  }
+
+  // Відправка повідомлення
+  bot.sendMessage(chatId, tokensText);
 }
 
 module.exports = {
