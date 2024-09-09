@@ -5,10 +5,10 @@ const getTokens = (game) => {
     const secretPath = path.join('/etc/secrets', `${game}_tokens.txt`);
     if (fs.existsSync(secretPath)) {
         const data = fs.readFileSync(secretPath, 'utf-8');
-        return data;
+        return data.split('\n').filter(line => line.trim() !== ''); // Розбиваємо рядки та фільтруємо пусті рядки
     } else {
         console.error(`Secret file not found: ${secretPath}`);
-        return null;
+        return []; // Повертаємо порожній масив замість null
     }
 };
 
