@@ -38,21 +38,54 @@ for (const [command, handler] of Object.entries(commandHandlers)) {
     });
 }
 
-function handleAddTokenCommand(msg, match) {
+async function handleAddTokenCommand(msg, match) {
     const chatId = msg.chat.id;
-    const [_, tokenType, token] = match;
+    const [_, tokenType, newToken] = match;
 
     if (isMessageFromAllowedGroup(msg)) {
-        const filePath = path.join(__dirname, `${tokenType}_tokens.txt`);
+        const filePath = path.join('/etc/secrets', `${tokenType}_tokens.txt`);
 
         try {
-            // Додавання нового токена в кінець файлу
-            fs.appendFileSync(filePath, token + '\n');
+            // Read existing tokens from the file
+            const existingTokens = getTokens(tokenType);
+
+            // Check for duplicate tokens (optional)
+            if (existingTokens.includes(newToken)) {
+                bot.sendMessage(chatId, `Токен "${newToken}" вже існує у файлі ${tokenType}_tokens.txt.`);
+                return;
+            }
+
+            // Add new token to the array
+            existingTokens.push(newToken);
+
+            // Write updated token array to file
+            fs.writeFileSync(filePath, existingTokens.join('\n') + '\n');
+
             bot.sendMessage(chatId, `Токен додано до файлу ${tokenType}_tokens.txt`);
+
+            // POST request to update the secret file content
+            await axios.put('https://api.render.com/v1/services/srv-crf081bv2p9s73d3f9t0/secret-files/filename', {
+                content: newToken
+            }, {
+                headers: {
+                    'Authorization': 'Bearer rnd_wsXw35KPvjzPvEadqe669rnZMrGr',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            // Restart the server
+            await axios.post('https://api.render.com/v1/services/srv-crf081bv2p9s73d3f9t0/restart', {}, {
+                headers: {
+                    'Authorization': 'Bearer rnd_wsXw35KPvjzPvEadqe669rnZMrGr'
+                }
+            });
+
+            bot.sendMessage(chatId, `Секретний файл оновлено і сервер перезавантажено.`);
+
         } catch (error) {
-            console.error("Error writing token to file: ", error);
-            sendLogMessage("Error writing token to file: " + error.message);
-            bot.sendMessage(chatId, 'Помилка при додаванні токена.');
+            console.error("Error updating token file or making HTTP requests: ", error);
+            sendLogMessage("Error updating token file or making HTTP requests: " + error.message);
+            bot.sendMessage(chatId, 'Помилка при додаванні токена або запитах до API.');
         }
     }
 }
