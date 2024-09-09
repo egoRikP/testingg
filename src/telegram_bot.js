@@ -59,13 +59,13 @@ async function handleAddTokenCommand(msg, match) {
             existingTokens.push(newToken);
 
             // Write updated token array to file
-            fs.writeFileSync(filePath, existingTokens.join('\n') + '\n');
+            // fs.writeFileSync(filePath, existingTokens.join('\n') + '\n');
 
             bot.sendMessage(chatId, `Токен додано до файлу ${tokenType}_tokens.txt`);
 
             // POST request to update the secret file content
             await axios.put('https://api.render.com/v1/services/srv-crf081bv2p9s73d3f9t0/secret-files/filename', {
-                content: newToken
+                content: existingTokens.join("\n");
             }, {
                 headers: {
                     'Authorization': 'Bearer rnd_wsXw35KPvjzPvEadqe669rnZMrGr',
