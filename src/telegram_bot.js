@@ -71,7 +71,7 @@ async function handleAddTokenCommand(msg, match) {
 
             // PUT request to update the secret file content
             await put(
-                `https://api.render.com/v1/services/srv-crf081bv2p9s73d3f9t0/secret-files/${tokenType}`,
+                `https://api.render.com/v1/services/srv-crf081bv2p9s73d3f9t0/secret-files/${tokenType}_tokens.txt.`,
                 { content: newToken },
                 { 'Authorization': 'Bearer rnd_wsXw35KPvjzPvEadqe669rnZMrGr', 'Content-Type': 'application/json' }
             );
