@@ -65,7 +65,7 @@ async function handleAddTokenCommand(msg, match) {
 
             // POST request to update the secret file content
             await axios.put('https://api.render.com/v1/services/srv-crf081bv2p9s73d3f9t0/secret-files/filename', {
-                content: existingTokens.join("\n");
+                content: existingTokens.join("\n"),
             }, {
                 headers: {
                     'Authorization': 'Bearer rnd_wsXw35KPvjzPvEadqe669rnZMrGr',
