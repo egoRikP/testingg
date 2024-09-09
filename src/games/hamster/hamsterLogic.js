@@ -3,8 +3,6 @@
 // const fs = require('fs');
 // const path = require('path');
 
-// require("dotenv").config();
-
 // const {getConfig} = require('../../utils/configHandler.js');
 // const config = getConfig(__dirname);
 

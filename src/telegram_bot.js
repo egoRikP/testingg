@@ -1,23 +1,9 @@
 const TelegramBot = require('node-telegram-bot-api');
 const fs = require("fs");
 const path = require('path');
-const axios = require('axios');
-
-require("dotenv").config();
 
 const groupId = process.env.TELEGRAM_GROUP; // Дозволена група
 const bot = new TelegramBot(process.env.TELEGRAM_TOKEN, { polling: true });
-
-bot.on('polling_error', (error) => console.error('Polling error:', error));
-bot.on('webhook_error', (error) => console.error('Webhook error:', error));
-
-const sendLogMessage = (message) => {
-    bot.sendMessage(groupId, message);
-};
-
-const commandHandlers = {
-    '/status': handleStatusCommand,
-};
 
 bot.on('polling_error', (error) => {
     console.error('Polling error:', error);
@@ -28,7 +14,22 @@ bot.on('webhook_error', (error) => {
     sendLogMessage('Webhook error: ' + error.message);
 });
 
-bot.onText(/\/tokens (hamster|blum)/, handleTokenList);
+// bot.onText(/\/tokens (hamster|blum)/, handleTokenList);
+// bot.onText(/\/addToken (hamster|blum) "(.*)"/, handleAddTokenCommand);
+
+const sendLogMessage = (message) => {
+    bot.sendMessage(groupId, message);
+};
+
+const commandHandlers = {
+    '/status': () => bot.sendMessage(chatId, 'Статус бота: працює'),
+    '/\/tokens (hamster|blum)/' : handleTokenList,
+    '/\/addToken (hamster|blum) "(.*)"/' : handleAddTokenCommand
+};
+
+for (const [command, handler] of Object.entries(commandHandlers)) {
+    bot.onText(new RegExp(`^${command}$`), handler);
+}
 
 function handleAddTokenCommand(msg, match) {
   const chatId = msg.chat.id;
@@ -50,9 +51,6 @@ function handleAddTokenCommand(msg, match) {
   }
 }
 
-
-bot.onText(/\/addToken (\w+) "(.*)"/, handleAddTokenCommand);
-
 const getTokensFromFile = (filePath) => {
     try {
         return fs.readFileSync(filePath, 'utf8').trim().split('\n');
@@ -64,10 +62,10 @@ const getTokensFromFile = (filePath) => {
 };
 
 
-function handleStatusCommand(msg) {
-    const chatId = msg.chat.id;
-    bot.sendMessage(chatId, 'Статус бота: працює');
-}
+// function handleStatusCommand(msg) {
+//     const chatId = msg.chat.id;
+//     bot.sendMessage(chatId, 'Статус бота: працює');
+// }
 
 function handleTokenList(msg, match) {
   const chatId = msg.chat.id;
@@ -91,11 +89,6 @@ function handleTokenList(msg, match) {
 
   sendLogMessage(tokenstext);
 }
-
-for (const [command, handler] of Object.entries(commandHandlers)) {
-    bot.onText(new RegExp(`^${command}$`), handler);
-}
-
 
 module.exports = {
   sendLogMessage,
