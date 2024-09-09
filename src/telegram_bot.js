@@ -78,8 +78,10 @@ function handleTokenList(msg, match) {
       return;
   }
 
+  console.log(tokens);
+
   // Відправка повідомлення
-  bot.sendMessage(chatId, tokensText);
+  // bot.sendMessage(chatId, tokensText);
 }
 
 module.exports = {
