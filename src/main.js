@@ -1,5 +1,5 @@
 require("dotenv").config();
 
-require("./server.js");
+// require("./server.js");
 require("./telegram_bot.js");
-require("./games/games.js");
+// require("./games/games.js");
